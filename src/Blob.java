@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -34,10 +35,17 @@ public class Blob {
 		// make sha1 hash
 		this.SHA1_HASH = encrypt(content);
 		
-		// write new file with sha1 as the name
-		Path np = Paths.get(".\\objects\\" + this.SHA1_HASH);
+		// write new file with sha1 as the name - KONNIE FIXED - WASN'T CREATING FILE BEFORE
+		File np = new File ("objects/" + SHA1_HASH);
 		try {
-			Files.writeString(np, content, StandardCharsets.ISO_8859_1);
+			np.createNewFile();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Path p2 = Paths.get ("objects/" + SHA1_HASH);
+		try {
+			Files.writeString(p2, content, StandardCharsets.ISO_8859_1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
