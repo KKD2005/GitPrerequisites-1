@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -7,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Index {
 	/**
@@ -28,27 +30,30 @@ public class Index {
 		this.map = new HashMap<String, String>();
 	}
 
-	public void initProject() {
-		// make objects folder
-		Path obj = Paths.get(".\\objects");
-		// tbh i dont think this is how ur meant to use a try catch block but i will do it until issues arise
-		try {
-			Files.createDirectory(obj);
-		} catch (FileAlreadyExistsException e) {
-			System.out.println(e);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void initProject()  {
+		// make objects folder - KONNIE EDITED - PREVIOUSLY WAS NOT CREATING FOLDER WHEN TESTING
+		File obj = new File ("objects");
+
+			obj.mkdir();
+			
+			for (File file: Objects.requireNonNull(obj.listFiles())) {
+	        	if (!file.isDirectory()) {
+	        		file.delete();
+	        	}
+	        }
 		
-		// make index file 
-		Path idx = Paths.get(".\\index");
-		try {
-			Files.createFile(idx);
-		} catch (FileAlreadyExistsException e) {
-			System.out.println(e);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// make index file - KONNIE EDITED - PREVIOUSLY WAS NOT MAKING AN INDEX FILE PROPERLY
+		File idx = new File ("index");
+		if (idx.exists()) {
+	        idx.delete();
+	        }
+	        File idx2=new File ("index");
+	        try {
+				idx2.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	public void updateIndex() throws IOException {

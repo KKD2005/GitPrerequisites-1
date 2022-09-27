@@ -78,9 +78,9 @@ class IrisBlobTest {
 	
 	@Test
 	void testBlob() throws IOException {
-		Blob b = new Blob ("test.txt");
+		Blob b = new Blob ("secondTest.txt");
 		
-		File file = new File("./objects/ff9f6ae1c8d4ca16e67f15f4ae1d10e9bc69beaa");
+		File file = new File("./objects/4a4e0e220c01d6170a3e057cc39c322c3bdd0755");
 		assertTrue(file.exists());
 		
 		String content = "";
