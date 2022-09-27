@@ -66,5 +66,8 @@ public class Blob {
 			throw new RuntimeException(e);
 		}
 	}
+	public String getShaOne() {
+		return SHA1_HASH;
+	}
 
 }

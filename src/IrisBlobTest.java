@@ -85,13 +85,13 @@ class IrisBlobTest {
 		
 		String content = "";
 		
-		BufferedReader reader = new BufferedReader(new FileReader("./objects/ff9f6ae1c8d4ca16e67f15f4ae1d10e9bc69beaa"));
+		BufferedReader reader = new BufferedReader(new FileReader("./objects/4a4e0e220c01d6170a3e057cc39c322c3bdd0755"));
 
 		while (reader.ready()) {
 			content += (char)reader.read();
 		}
 		
-		assertTrue(content.equals("First testing file"));
+		assertTrue(content.equals("Second testing file"));
 	}
 	
 	@Test
@@ -108,7 +108,7 @@ class IrisBlobTest {
 		while (reader.ready()) {
 			content += (char)reader.read();
 		}
-		
+		reader.close();
 		assertTrue(content.equals("secondTest.txt : 4a4e0e220c01d6170a3e057cc39c322c3bdd0755\n"));
 		
 		index.addBlob("thirdTest.txt");
@@ -136,27 +136,34 @@ class IrisBlobTest {
 	@Test
 	void testIndexRemove() throws IOException {
 		
+index.initProject();
+		
+		File file = new File ("index");
+		
+		assertTrue(file.exists());
+		
+		Path path = Paths.get("objects");
+		assertTrue(Files.exists(path));
+		index.addBlob("secondTest.txt");
 		index.removeBlob("secondTest.txt");
 		
 		assertFalse(index.map.containsKey("secondTest.txt"));
 		
 		String newContent = "";
 		
-		File deleted = new File("./objects/4a4e0e220c01d6170a3e057cc39c322c3bdd0755");
+		File deleted = new File("objects/4a4e0e220c01d6170a3e057cc39c322c3bdd0755");
 		assertFalse(deleted.exists());
 		
 		BufferedReader thirdReader = new BufferedReader(new FileReader("index"));
-		
 		while (thirdReader.ready()) {
 			newContent += (char)thirdReader.read();
 		}
-		
-		System.out.println(newContent);
+		thirdReader.close();
+
 		
 		// check that index contains the stuff it should but also has the secondTest removed
 		assertTrue(!newContent.contains("secondTest.txt : 4a4e0e220c01d6170a3e057cc39c322c3bdd0755\n") && newContent.contains("thirdTest.txt : a4e554c577ef9ab5e4b71e9197ec70c95f715b02\n"));
 		
-		thirdReader.close();
 	}
 	
 	
