@@ -62,9 +62,9 @@ public class Index {
 	
 	public void updateIndex() throws IOException {
 		// get contents of map in a string
-		StringBuilder sb = new StringBuilder();
+		String s = new String("");
 		for (Map.Entry<String, String> e : map.entrySet()) {
-			sb.append(e.getKey() + " : " + e.getValue() + "\n");
+			s = s+"\n"+(e.getKey() + " : " + e.getValue());
 		}
 		
 		// overwrite contents of index file - KONNIE FIXED - IT DIDN'T WORK EARLIER
@@ -75,12 +75,14 @@ public class Index {
         File idx2=new File ("index");
         idx2.createNewFile();
         Path p = Paths.get("index");
+      
         try {
-            Files.writeString(p, sb.toString(), StandardCharsets.ISO_8859_1);
+            Files.writeString(p, s, StandardCharsets.ISO_8859_1);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
 	}
 	
 	public void addBlob(String filename) {
@@ -97,7 +99,6 @@ public class Index {
 	public void removeBlob(String filename) {
 		// delete file in objects folder - KONNIE FIXED-DIDN'T WORK BEFORE
 		File delete = new File ("objects/" + this.map.get(filename));
-		System.out.print ("objects/" + this.map.get(filename));
 		if (delete.exists()) {
 			delete.delete();
 		}

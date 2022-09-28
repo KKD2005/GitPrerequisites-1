@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -28,16 +29,24 @@ public class Tree {
 		
 		for (String pair : pairs) {
 			
-			int colon = pair.indexOf(':');
 			
-			content += pair.substring(0, colon) + " : " + pair.substring(colon+2) + "\n";
+			
+			content =content + pair +"\n";
 			
 		}
 		
+		content = content.substring(0, content.length()-1);
 		String contentHash = Blob.encrypt(content);
 		
-		// write new file with sha1 as the name
-		Path np = Paths.get(".\\objects\\" + contentHash);
+		// write new file with sha1 as the name - KONNIE FIXED - DIDN'T WORK BEFORE
+		File file = new File ("objects/"+contentHash);
+		try {
+			file.createNewFile();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Path np = Paths.get("objects/"+contentHash);
 		try {
 			Files.writeString(np, content, StandardCharsets.ISO_8859_1);
 		} catch (IOException e) {
