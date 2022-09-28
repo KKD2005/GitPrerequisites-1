@@ -44,6 +44,14 @@ public class Commit {
 	        	String filename = line.substring(0,colon-1);
 	        	String Sha= line.substring(colon+2);
 	        	entries.add("blob : "+Sha+" "+filename); 
+	        	}else {
+	        		if (line.substring(0,8).equals("*edited*")){
+	        			
+	        		} else {
+	        			
+	    	        	String fileToDelete= line.substring(10);
+	        			deleteRecursion (this.tree.getFileName(), fileToDelete, entries);
+	        		}
 	        	}
 	        }
 	        in.close();
@@ -143,7 +151,64 @@ public class Commit {
 	public Tree getTree() {
 		return tree;
 	}
-	public void delete () {
-		
+	public void delete (String fileToDelete) throws IOException {
+		File index = new File ("index");
+		if (!index.exists()) {
+			index.createNewFile();
+		}
+		String contents = "";
+		BufferedReader in = new BufferedReader (new FileReader ("index"));
+        while (in.ready()) {
+        	String line = in.readLine();
+        	contents=contents+line+"\n";
+        }
+        in.close();
+        
+        contents+="*deleted* "+fileToDelete;
+        File idx = new File ("index");
+		if (idx.exists()) {
+			idx.delete();
+		}
+		 File idx2 = new File ("index");
+		 idx2.createNewFile();
+        Path p = Paths.get("index");
+        
+        try {
+            Files.writeString(p, contents, StandardCharsets.ISO_8859_1);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+	}
+	
+	public void deleteRecursion (String ogTree, String fileToDelete, ArrayList<String> entries) throws IOException {
+		String treeSha = new String ("");
+		boolean found = false;
+		BufferedReader r = new BufferedReader (new FileReader (ogTree));
+        while (r.ready()) {
+        	String line = r.readLine();
+        	if (line.substring(0,4).equals ("tree")) {
+        		treeSha = line.substring(7);
+        		treeSha = treeSha.substring(0,treeSha.length()-1);
+        	}else {
+        		String blobName = line.substring(48);
+        		if (blobName.equals(fileToDelete)) {
+        			found=true;
+        			
+        		}else {
+        			entries.add(line);
+        		}
+        	}
+        }
+        r.close();
+        if (treeSha.length()==0) {
+        	
+        } else if (found==true) {
+        	entries.add("tree : "+treeSha + " ");
+        	
+        } else {
+        	deleteRecursion (treeSha, fileToDelete, entries);
+        }
 	}
 }
