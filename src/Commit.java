@@ -21,7 +21,7 @@ public class Commit {
 	private String summary;
 	private String author;
 	private String date;
-	public Commit (String one, String two, String three, Commit parent) throws IOException {
+	public Commit (String two, String three, Commit parent) throws IOException {
 		summary  = two;
 		author = three;
 		parentCommit = parent;
@@ -41,7 +41,7 @@ public class Commit {
 	        	String line = in.readLine();
 	        	int colon = line.indexOf(':');
 	        	String filename = line.substring(0,colon-1);
-	        	String Sha= line.substring(colon+1);
+	        	String Sha= line.substring(colon+2);
 	        	entries.add("blob : "+Sha+" "+filename); 
 	        }
 	        in.close();
@@ -52,7 +52,7 @@ public class Commit {
 	        File idx = new File ("index");
 	        if (idx.exists()) {
 	        	idx.delete();
-	        }	       
+	        }
 	        File idx2 = new File ("index");
 	        idx2.createNewFile();
 
@@ -114,7 +114,6 @@ public class Commit {
 	}
 	public void writeFile() throws IOException {
 		String contents = new String ("");
-		contents = contents+"objects/"+tree.getFileName() + "\n";
 		if (parentCommit ==null) {
 			contents=contents+ "\n";
 		} else{

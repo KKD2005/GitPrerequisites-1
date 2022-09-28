@@ -64,9 +64,9 @@ public class Index {
 		// get contents of map in a string
 		String s = new String("");
 		for (Map.Entry<String, String> e : map.entrySet()) {
-			s = s+"\n"+(e.getKey() + " : " + e.getValue());
+			s = s+(e.getKey() + " : " + e.getValue()) + "\n";
 		}
-		
+		s=s.substring(0,s.length()-1);
 		// overwrite contents of index file - KONNIE FIXED - IT DIDN'T WORK EARLIER
 		File idx = new File("index"); 
         if (idx.exists()) {
@@ -113,6 +113,10 @@ public class Index {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void clearHashMap(){
+		map = new HashMap <String,String>();
 	}
 	
 }

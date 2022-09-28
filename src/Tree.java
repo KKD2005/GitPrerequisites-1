@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class Tree {
 	
 	HashMap<String, String> files = new HashMap<String, String>();
-	
+	String contentHash;
 	public Tree(ArrayList<String> pairs) {
 		
 //		for (String pair : pairs) {
@@ -36,7 +36,7 @@ public class Tree {
 		}
 		
 		content = content.substring(0, content.length()-1);
-		String contentHash = Blob.encrypt(content);
+		 contentHash = Blob.encrypt(content);
 		
 		// write new file with sha1 as the name - KONNIE FIXED - DIDN'T WORK BEFORE
 		File file = new File ("objects/"+contentHash);
@@ -54,6 +54,11 @@ public class Tree {
 		}
 		
 	}
+	public String getFileName() {
+		// TODO Auto-generated method stub
+		return contentHash;
+	}
+	
 	
 }
 

@@ -36,6 +36,10 @@ public class Blob {
 		this.SHA1_HASH = encrypt(content);
 		
 		// write new file with sha1 as the name - KONNIE FIXED - WASN'T CREATING FILE BEFORE
+		File obj = new File ("objects");
+		if (obj.exists()==false) {
+		obj.mkdir();
+		}
 		File np = new File ("objects/" + SHA1_HASH);
 		try {
 			np.createNewFile();
