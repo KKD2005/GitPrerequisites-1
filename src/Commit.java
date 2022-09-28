@@ -39,10 +39,12 @@ public class Commit {
 	        BufferedReader in = new BufferedReader (new FileReader ("index"));
 	        while (in.ready()) {
 	        	String line = in.readLine();
+	        	if (line.charAt(0)!='*') {
 	        	int colon = line.indexOf(':');
 	        	String filename = line.substring(0,colon-1);
 	        	String Sha= line.substring(colon+2);
 	        	entries.add("blob : "+Sha+" "+filename); 
+	        	}
 	        }
 	        in.close();
 	        if (parentCommit!=null) {
@@ -140,5 +142,8 @@ public class Commit {
 	}
 	public Tree getTree() {
 		return tree;
+	}
+	public void delete () {
+		
 	}
 }
