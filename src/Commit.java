@@ -55,6 +55,7 @@ public class Commit {
 	        	}
 	        }
 	        in.close();
+	        //NEED TO BE FIXED
 	        if (parentCommit!=null) {
 	        	entries.add("tree : "+ parentCommit.getTree().getFileName()+" ");
 	        }
@@ -124,6 +125,7 @@ public class Commit {
 	}
 	public void writeFile() throws IOException {
 		String contents = new String ("");
+		contents = contents+tree.getFileName()+ "\n";
 		if (parentCommit ==null) {
 			contents=contents+ "\n";
 		} else{
