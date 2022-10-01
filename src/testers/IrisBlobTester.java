@@ -17,7 +17,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class IrisBlobTest {
+class IrisBlobTester {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -136,7 +136,7 @@ class IrisBlobTest {
 		secondReader.close();
 	}
 	
-	@Test
+	//@Test
 	void testIndexRemove() throws IOException {
 		
 index.initProject();
@@ -148,7 +148,7 @@ index.initProject();
 		Path path = Paths.get("objects");
 		assertTrue(Files.exists(path));
 		index.addBlob("secondTest.txt");
-		index.removeBlob("secondTest.txt");
+		index.delete("secondTest.txt");
 		
 		
 		String newContent = "";

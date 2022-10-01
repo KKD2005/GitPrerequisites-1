@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class CommitTest {
+class CommitTester {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {

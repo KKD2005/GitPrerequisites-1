@@ -99,7 +99,7 @@ public class Index {
 	}
 	
 	
-	public void removeBlob(String filename) throws IOException {
+	public void delete(String filename) throws IOException {
 		
 			File index = new File ("index");
 			if (!index.exists()) {
@@ -130,7 +130,7 @@ public class Index {
 	        }
 	        
 		}
-	public void editBlob(String filename) throws IOException {
+	public void editExisting(String filename) throws IOException {
 		
 		File index = new File ("index");
 		if (!index.exists()) {
