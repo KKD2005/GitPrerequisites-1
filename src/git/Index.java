@@ -130,6 +130,37 @@ public class Index {
 	        }
 	        
 		}
+	public void editBlob(String filename) throws IOException {
+		
+		File index = new File ("index");
+		if (!index.exists()) {
+			index.createNewFile();
+		}
+		String contents = "";
+		BufferedReader in = new BufferedReader (new FileReader ("index"));
+        while (in.ready()) {
+        	String line = in.readLine();
+        	contents=contents+line+"\n";
+        }
+        in.close();
+        
+        contents+="*edited* "+filename;
+        File idx = new File ("index");
+		if (idx.exists()) {
+			idx.delete();
+		}
+		 File idx2 = new File ("index");
+		 idx2.createNewFile();
+        Path p = Paths.get("index");
+        
+        try {
+            Files.writeString(p, contents, StandardCharsets.ISO_8859_1);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+	}
 	
 	
 	public void clearHashMap(){

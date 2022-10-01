@@ -58,12 +58,12 @@ public class Commit {
 	        	        	String nextLine = old.readLine();
 	        	        	contents=contents+nextLine+"\n";
 	        	        }
-	        	        in.close();
+	        	        old.close();
 	        	        if (contents.length()!=0) {
 	        	        contents = contents.substring(0, contents.length()-1);
 	        	        }
 	        	        String Sha = generateSha1String(contents);
-	        			entries.add("blob : "+Sha+line.substring(9));
+	        			entries.add("blob : "+Sha+" " +line.substring(9));
 	        		} else {
 	        			delete.add (line.substring(10));
 	    	        	
@@ -71,7 +71,7 @@ public class Commit {
 	        	}
 	        }
 	        in.close();
-	        //NEED TO BE FIXED{
+	        
 	        if (delete.size()==0) {
 	        if (parentCommit!=null) {
 	        	entries.add("tree : "+ parentCommit.getTree().getFileName()+" ");
@@ -198,7 +198,7 @@ public class Commit {
 	            e.printStackTrace();
 	        }
 	}
-	public Tree getTree() {
+	public Tree getTree() { 
 		return tree;
 	}
 	
