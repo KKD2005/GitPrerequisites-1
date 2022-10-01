@@ -1,4 +1,7 @@
+package git;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -96,24 +99,38 @@ public class Index {
 	}
 	
 	
-	public void removeBlob(String filename) {
-		// delete file in objects folder - KONNIE FIXED-DIDN'T WORK BEFORE
-		File delete = new File ("objects/" + this.map.get(filename));
-		if (delete.exists()) {
-			delete.delete();
+	public void removeBlob(String filename) throws IOException {
+		
+			File index = new File ("index");
+			if (!index.exists()) {
+				index.createNewFile();
+			}
+			String contents = "";
+			BufferedReader in = new BufferedReader (new FileReader ("index"));
+	        while (in.ready()) {
+	        	String line = in.readLine();
+	        	contents=contents+line+"\n";
+	        }
+	        in.close();
+	        
+	        contents+="*deleted* "+filename;
+	        File idx = new File ("index");
+			if (idx.exists()) {
+				idx.delete();
+			}
+			 File idx2 = new File ("index");
+			 idx2.createNewFile();
+	        Path p = Paths.get("index");
+	        
+	        try {
+	            Files.writeString(p, contents, StandardCharsets.ISO_8859_1);
+	        } catch (IOException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	        
 		}
-		
-		
-		// remove from hashmap
-		this.map.remove(filename);
-		
-		// remove from index file
-		try {
-			updateIndex();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	
 	
 	public void clearHashMap(){
 		map = new HashMap <String,String>();

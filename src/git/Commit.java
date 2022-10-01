@@ -1,3 +1,4 @@
+package git;
 import java.io.BufferedReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -200,40 +201,11 @@ public class Commit {
 	public Tree getTree() {
 		return tree;
 	}
-	public void delete (String fileToDelete) throws IOException {
-		File index = new File ("index");
-		if (!index.exists()) {
-			index.createNewFile();
-		}
-		String contents = "";
-		BufferedReader in = new BufferedReader (new FileReader ("index"));
-        while (in.ready()) {
-        	String line = in.readLine();
-        	contents=contents+line+"\n";
-        }
-        in.close();
-        
-        contents+="*deleted* "+fileToDelete;
-        File idx = new File ("index");
-		if (idx.exists()) {
-			idx.delete();
-		}
-		 File idx2 = new File ("index");
-		 idx2.createNewFile();
-        Path p = Paths.get("index");
-        
-        try {
-            Files.writeString(p, contents, StandardCharsets.ISO_8859_1);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-	}
+	
 	
 	public void deleteRecursion (String ogTree, ArrayList<String> filesToDelete, ArrayList<String> entries, int numberOfTimes) throws IOException {
 		String treeSha = new String ("");
-		BufferedReader r = new BufferedReader (new FileReader (ogTree));
+		BufferedReader r = new BufferedReader (new FileReader ("objects/"+ogTree));
         while (r.ready()) {
         	String line = r.readLine();
         	if (line.substring(0,4).equals ("tree")) {
@@ -261,7 +233,7 @@ public class Commit {
 	}
 	
 	public void deleteMain(ArrayList<String> filesToDelete, ArrayList<String> entries) throws IOException {
-		int numberOfTimes = getFirstFile(filesToDelete, tree.getFileName(), 0, 0);
+		int numberOfTimes = getFirstFile(filesToDelete, parentCommit.getTree().getFileName(), 0, 0);
 		 deleteRecursion (parentCommit.getTree().getFileName(), filesToDelete,entries,numberOfTimes);
 	}
 	
@@ -269,7 +241,7 @@ public class Commit {
 		int total = filesToDelete.size();
 		String treeSha="";
 		
-			BufferedReader r = new BufferedReader (new FileReader (ogTree));
+			BufferedReader r = new BufferedReader (new FileReader ("objects/"+ogTree));
 	        while (r.ready()) {
 	        	String line = r.readLine();
 	        	if (line.substring(0,4).equals ("tree")) {

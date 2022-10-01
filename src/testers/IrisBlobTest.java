@@ -1,4 +1,7 @@
+package testers;
 import static org.junit.jupiter.api.Assertions.*;
+import git.Index;
+import git.Blob;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -147,7 +150,6 @@ index.initProject();
 		index.addBlob("secondTest.txt");
 		index.removeBlob("secondTest.txt");
 		
-		assertFalse(index.map.containsKey("secondTest.txt"));
 		
 		String newContent = "";
 		

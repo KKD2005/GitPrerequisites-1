@@ -1,4 +1,6 @@
+package testers;
 import java.util.Scanner;
+import git.Index;
 
 public class Tester {
 
@@ -9,7 +11,7 @@ public class Tester {
 		Scanner kb = new Scanner(System.in);
 		System.out.println("check stuff now");
 		String s = kb.next();
-		i.removeBlob("funContent.txt");
+//		i.removeBlob("funContent.txt");
 	}
 
 }
