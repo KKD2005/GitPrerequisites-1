@@ -1,4 +1,6 @@
 import java.io.BufferedReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -32,11 +34,11 @@ public class Commit {
 	        if (objects.exists()==false) {
 	        	objects.mkdir();
 	        }
-	        Calendar today = Calendar.getInstance();
-	        today.set(Calendar.HOUR_OF_DAY, 0); // same for minutes and seconds
-	        date = today.getTime().toString();
+	        
+	        date = java.time.LocalDate.now().toString();
 	        ArrayList <String>entries = new ArrayList <String>();
 	        BufferedReader in = new BufferedReader (new FileReader ("index"));
+	        ArrayList <String>delete = new ArrayList<String >();
 	        while (in.ready()) {
 	        	String line = in.readLine();
 	        	if (line.charAt(0)!='*') {
@@ -47,17 +49,34 @@ public class Commit {
 	        	}else {
 	        		if (line.substring(0,8).equals("*edited*")){
 	        			
-	        		} else {
+	        			delete.add ( line.substring(9));
 	        			
-	    	        	String fileToDelete= line.substring(10);
-	        			deleteRecursion (this.tree.getFileName(), fileToDelete, entries);
+	        			String contents = "";
+	        			BufferedReader old = new BufferedReader (new FileReader (line.substring(9)));
+	        	        while (old.ready()) {
+	        	        	String nextLine = old.readLine();
+	        	        	contents=contents+nextLine+"\n";
+	        	        }
+	        	        in.close();
+	        	        if (contents.length()!=0) {
+	        	        contents = contents.substring(0, contents.length()-1);
+	        	        }
+	        	        String Sha = generateSha1String(contents);
+	        			entries.add("blob : "+Sha+line.substring(9));
+	        		} else {
+	        			delete.add (line.substring(10));
+	    	        	
 	        		}
 	        	}
 	        }
 	        in.close();
-	        //NEED TO BE FIXED
+	        //NEED TO BE FIXED{
+	        if (delete.size()==0) {
 	        if (parentCommit!=null) {
 	        	entries.add("tree : "+ parentCommit.getTree().getFileName()+" ");
+	        }
+	        }else {
+	        	deleteMain(delete, entries);
 	        }
 	        tree = new Tree (entries);
 	        File idx = new File ("index");
@@ -99,8 +118,36 @@ public class Commit {
  
             // return the HashText
             return hashtext;
-        }
- 
+		}
+            catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+	}
+		public String generateSha1String(String input){
+			String contents = input;
+			try {
+	            // getInstance() method is called with algorithm SHA-1
+	            MessageDigest md = MessageDigest.getInstance("SHA-1");
+	 
+	            // digest() method is called
+	            // to calculate message digest of the input string
+	            // returned as array of byte
+	            byte[] messageDigest = md.digest(contents.getBytes());
+	 
+	            // Convert byte array into signum representation
+	            BigInteger no = new BigInteger(1, messageDigest);
+	 
+	            // Convert message digest into hex value
+	            String hashtext = no.toString(16);
+	 
+	            // Add preceding 0s to make it 32 bit
+	            while (hashtext.length() < 32) {
+	                hashtext = "0" + hashtext;
+	            }
+	 
+	            // return the HashText
+	            return hashtext;
+	        }
         // For specifying wrong message digest algorithms
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
@@ -184,9 +231,8 @@ public class Commit {
         
 	}
 	
-	public void deleteRecursion (String ogTree, String fileToDelete, ArrayList<String> entries) throws IOException {
+	public void deleteRecursion (String ogTree, ArrayList<String> filesToDelete, ArrayList<String> entries, int numberOfTimes) throws IOException {
 		String treeSha = new String ("");
-		boolean found = false;
 		BufferedReader r = new BufferedReader (new FileReader (ogTree));
         while (r.ready()) {
         	String line = r.readLine();
@@ -195,8 +241,7 @@ public class Commit {
         		treeSha = treeSha.substring(0,treeSha.length()-1);
         	}else {
         		String blobName = line.substring(48);
-        		if (blobName.equals(fileToDelete)) {
-        			found=true;
+        		if (filesToDelete.contains(blobName)) {
         			
         		}else {
         			entries.add(line);
@@ -206,11 +251,46 @@ public class Commit {
         r.close();
         if (treeSha.length()==0) {
         	
-        } else if (found==true) {
+        } else if (numberOfTimes==0) {
         	entries.add("tree : "+treeSha + " ");
         	
         } else {
-        	deleteRecursion (treeSha, fileToDelete, entries);
+        	numberOfTimes--;
+        	deleteRecursion (treeSha, filesToDelete, entries,numberOfTimes);
         }
+	}
+	
+	public void deleteMain(ArrayList<String> filesToDelete, ArrayList<String> entries) throws IOException {
+		int numberOfTimes = getFirstFile(filesToDelete, tree.getFileName(), 0, 0);
+		 deleteRecursion (parentCommit.getTree().getFileName(), filesToDelete,entries,numberOfTimes);
+	}
+	
+	public int getFirstFile (ArrayList<String>filesToDelete,String ogTree, int counterFiles, int counterTrees) throws IOException {
+		int total = filesToDelete.size();
+		String treeSha="";
+		
+			BufferedReader r = new BufferedReader (new FileReader (ogTree));
+	        while (r.ready()) {
+	        	String line = r.readLine();
+	        	if (line.substring(0,4).equals ("tree")) {
+	        		treeSha = line.substring(7);
+	        		treeSha = treeSha.substring(0,treeSha.length()-1);
+	        	}else {
+	        		String blobName = line.substring(48);
+	        		if (filesToDelete.contains(blobName)) {
+	        			counterFiles++;
+	        			
+	        		}
+	        	}
+	        }
+	        r.close();
+			
+		
+		if (treeSha.length()==0 || counterFiles==total) {
+		return counterTrees;
+		} else {
+			counterTrees++;
+			return getFirstFile(filesToDelete, treeSha,counterFiles, counterTrees);
+		}
 	}
 }
