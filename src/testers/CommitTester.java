@@ -5,6 +5,7 @@ import git.Commit;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -16,6 +17,10 @@ class CommitTester {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		File headDelete = new File("head");
+		if (headDelete.exists()) {
+			headDelete.delete();
+		}
 	}
 
 	@AfterAll
@@ -26,29 +31,26 @@ class CommitTester {
 	void test() throws IOException {
 		Index index = new Index();
 		index.addBlob("funContent.txt");
-		Commit first = new Commit ("first commit", "konnie", null);
+		Commit first = new Commit ("first commit", "konnie");
 		index.clearHashMap();
 		
 		index.addBlob("secondTest.txt");
 		index.addBlob("thirdTest.txt");
 		
-		Commit second = new Commit ("second commit", "konnie", first);
+		Commit second = new Commit ("second commit", "konnie");
 		index.clearHashMap();
 		index.addBlob("bar.txt");
 		index.addBlob("foo.txt");
 		index.addBlob("foobar.txt");
 		index.addBlob("something.txt");
-		Commit third = new Commit ("third commit", "konnie", second);
+		Commit third = new Commit ("third commit", "konnie");
 		index.clearHashMap();
 		index.addBlob ("firstTest.txt");
-		Commit fourth = new Commit ("fourth commit", "konnie", third);
+		Commit fourth = new Commit ("fourth commit", "konnie");
 		index.clearHashMap();
 
 
-		first.writeFile();
-		second.writeFile();
-		third.writeFile();
-		fourth.writeFile();
+		
 	}
 
 }

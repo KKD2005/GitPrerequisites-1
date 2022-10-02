@@ -48,7 +48,7 @@ class CommitWithDeleteAndEditTester {
 		        }
 		Index index = new Index();
 		index.addBlob("firstTest.txt");
-		Commit first = new Commit ("first commit", "konnie", null);
+		Commit first = new Commit ("first commit", "konnie");
 		index.clearHashMap();
 		
 		File funStuff1 = new File ("funContent.txt");
@@ -61,7 +61,7 @@ class CommitWithDeleteAndEditTester {
 	            e.printStackTrace();
 	        }
 		index.addBlob("funContent.txt");
-		Commit onePointFive = new Commit ("1.5 commit", "konnie", first);
+		Commit onePointFive = new Commit ("1.5 commit", "konnie");
 		index.clearHashMap();
 
 		index.addBlob("secondTest.txt");
@@ -81,19 +81,19 @@ class CommitWithDeleteAndEditTester {
 	        }
 		index.editExisting("funContent.txt");
 		
-		Commit second = new Commit ("second commit", "konnie", onePointFive);
+		Commit second = new Commit ("second commit", "konnie");
 		index.clearHashMap();
 		index.addBlob("bar.txt");
 		index.addBlob("foo.txt");
 		index.addBlob("foobar.txt");
 		index.addBlob("something.txt");
 		
-		Commit third = new Commit ("third commit", "konnie", second);
+		Commit third = new Commit ("third commit", "konnie");
 		index.clearHashMap();
 		
 		index.delete("secondTest.txt");
 		index.delete("thirdTest.txt");
-		Commit fourth = new Commit ("fourth commit", "konnie", third);
+		Commit fourth = new Commit ("fourth commit", "konnie");
 		index.clearHashMap();
 		File first3 = new File ("firstTest.txt");
 		if (first3.exists()) {
@@ -110,16 +110,11 @@ class CommitWithDeleteAndEditTester {
 	        }
 		index.editExisting("firstTest.txt");
 		index.delete("something.txt");
-		Commit fifth = new Commit ("fifth commit", "konnie", fourth);
+		Commit fifth = new Commit ("fifth commit", "konnie");
 
 //
 //
-		first.writeFile();
-		onePointFive.writeFile();
-		second.writeFile();
-		third.writeFile();
-		fourth.writeFile();	
-		fifth.writeFile();
+		
 	}
 
 }

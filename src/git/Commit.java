@@ -19,20 +19,36 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Commit {
-	private Commit nextCommit;
-	private Commit parentCommit;
+	private String parentCommit;
 	
 	private Tree tree;
 	private String summary;
 	private String author;
 	private String date;
-	public Commit (String two, String three, Commit parent) throws IOException {
+	public Commit (String two, String three) throws IOException {
 		summary  = two;
 		author = three;
-		parentCommit = parent;
-		if (parentCommit!=null) {
-		parentCommit.setNext(this);
+		
+		File head = new File ("head");
+		if (head.exists()) {
+			Scanner sc = new Scanner(head);
+			if (sc.hasNext()) {
+				String parentHash = sc.next();
+				if (parentHash.length()==40) {
+					parentCommit = parentHash;
+				}else {
+					parentCommit=null;
+				}
+				sc.close();
+			}
+		}else {
+			parentCommit = null;
 		}
+		
+//		if (parentCommit!=null) {
+//		parentCommit.setNext(this);
+//		}
+		
 		 File objects = new File ("objects");
 	        if (objects.exists()==false) {
 	        	objects.mkdir();
@@ -76,7 +92,20 @@ public class Commit {
 	        
 	        if (delete.size()==0) {
 	        if (parentCommit!=null) {
-	        	entries.add("tree : "+ parentCommit.getTree().getFileName()+" ");
+	        	File objectCommit = new File ("objects/" +parentCommit);
+	    		String parentTree = null;
+	    		if (objectCommit.exists()) {
+	    			Scanner sc = new Scanner(objectCommit);
+	    			if (sc.hasNext()) {
+	    				 parentTree = sc.next();
+	    				
+	    				
+	    			}
+	    			sc.close();
+	    		}
+	    		if (parentTree!=null) {
+	        	entries.add("tree : "+ parentTree+" ");
+	        }
 	        }
 	        }else {
 	        	deleteMain(delete, entries);
@@ -88,15 +117,65 @@ public class Commit {
 	        }
 	        File idx2 = new File ("index");
 	        idx2.createNewFile();
-
 	        
+	        writeFile();
+	        String Sha = generateSha1String();
+	        
+	        //put this commit in parent commit
+	        if (parentCommit!=null) {
+	        String contents = "";
+			BufferedReader pread = new BufferedReader (new FileReader ("objects/"+parentCommit));
+	        if (pread.ready()) {
+	        	String nextLine = pread.readLine();
+	        	contents=contents+nextLine+"\n";
+	        }
+	        if (pread.ready()) {
+	        	String nextLine = pread.readLine();
+	        	contents=contents+nextLine+"\n";
+	        }
+	        pread.readLine();
+	        contents+= "objects/"+Sha +"\n";
+	        while (pread.ready()) {
+	        	String nextLine = pread.readLine();
+	        	contents=contents+nextLine+"\n";
+	        }
+	        pread.close();
+	        if (contents.length()!=0) {
+	        contents = contents.substring(0, contents.length()-1);
+	        }
+	        File pcommitDelete = new File ("objects/"+parentCommit);
+	        if (pcommitDelete.exists()) {
+	        	pcommitDelete.delete();
+	        }
+	        File pcommit = new File ("objects/"+parentCommit);
+			pcommit.createNewFile();
+			 Path p = Paths.get("objects/"+parentCommit);
+		        try {
+		            Files.writeString(p, contents, StandardCharsets.ISO_8859_1);
+		        } catch (IOException e) {
+		            // TODO Auto-generated catch block
+		            e.printStackTrace();
+		        }
+	        }
+	        //put this commit in head
+	        File headDelete = new File ("head");
+	        if (headDelete.exists()) {
+	        	headDelete.delete();
 	        	
+	        }
+	        
+	        File headNew = new File ("head");
+	        headNew.createNewFile();
+	        Path phead = Paths.get("head");
+	        try {
+	            Files.writeString(phead, Sha, StandardCharsets.ISO_8859_1);
+	        } catch (IOException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+
 	}
-	public void setNext(Commit next) {
-		
-		nextCommit = next;
-		
-	}
+	
 	public String generateSha1String(){
 		String contents = getContents();
 		try {
@@ -169,7 +248,7 @@ public class Commit {
 		if (parentCommit ==null) {
 
 		} else{
-			contents=contents+ "objects/" + parentCommit.generateSha1String() ;
+			contents=contents+ "objects/" + parentCommit ;
 		}
 		return contents;
 	}
@@ -179,13 +258,11 @@ public class Commit {
 		if (parentCommit ==null) {
 			contents=contents+ "\n";
 		} else{
-			contents=contents+ "objects/" + parentCommit.generateSha1String() + "\n";
+			contents=contents+ "objects/" + parentCommit + "\n";
 		}
-		if (nextCommit ==null) {
+		
 			contents=contents+ "\n";
-		} else{
-			contents=contents+"objects/"+nextCommit.generateSha1String() + "\n";
-		}
+		
 		contents=contents+author + "\n";
 		contents=contents+date + "\n";
 		contents=contents+this.summary;
@@ -235,8 +312,18 @@ public class Commit {
 	}
 	
 	public void deleteMain(ArrayList<String> filesToDelete, ArrayList<String> entries) throws IOException {
-		int numberOfTimes = getFirstFile(filesToDelete, parentCommit.getTree().getFileName(), 0, 0);
-		 deleteRecursion (parentCommit.getTree().getFileName(), filesToDelete,entries,numberOfTimes);
+		File objectCommit = new File ("objects/" +parentCommit);
+		String parentTree = null;
+		if (objectCommit.exists()) {
+			Scanner sc = new Scanner(objectCommit);
+			if (sc.hasNext()) {
+				 parentTree = sc.next();
+				
+				sc.close();
+			}
+		}
+		int numberOfTimes = getFirstFile(filesToDelete, parentTree, 0, 0);
+		 deleteRecursion (parentTree, filesToDelete,entries,numberOfTimes);
 	}
 	
 	public int getFirstFile (ArrayList<String>filesToDelete,String ogTree, int counterFiles, int counterTrees) throws IOException {
