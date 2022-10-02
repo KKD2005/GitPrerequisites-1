@@ -16,10 +16,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class Commit {
 	private Commit nextCommit;
 	private Commit parentCommit;
+	
 	private Tree tree;
 	private String summary;
 	private String author;
