@@ -81,8 +81,23 @@ public class Commit {
 	        	        contents = contents.substring(0, contents.length()-1);
 	        	        }
 	        	        String Sha = generateSha1String(contents);
-	        			entries.add("blob : "+Sha+" " +line.substring(9));
-	        		} else {
+	        	        File editBlobDelete = new File ("objects/"+Sha);
+	        	        if (editBlobDelete.exists()) {
+	        	        	editBlobDelete.delete();
+	        	        }
+	        	        File editBlob = new File("objects/"+Sha);
+	        	        editBlob.createNewFile();
+	        	        Path pEdit = Paths.get("objects/"+Sha);
+	       		        try {
+	       		            Files.writeString(pEdit, contents, StandardCharsets.ISO_8859_1);
+	       		        } catch (IOException e) {
+	       		            // TODO Auto-generated catch block
+	       		            e.printStackTrace();
+	       		        }
+	       	        
+	       		        entries.add("blob : "+Sha+" " +line.substring(9));
+	        		}
+	        		 else {
 	        			delete.add (line.substring(10));
 	    	        	
 	        		}

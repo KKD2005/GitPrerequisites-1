@@ -20,6 +20,10 @@ class CommitWithDeleteAndEditTester {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		File headDelete = new File("head");
+		if (headDelete.exists()) {
+			headDelete.delete();
+		}
 	}
 
 	@AfterAll
@@ -111,6 +115,7 @@ class CommitWithDeleteAndEditTester {
 		index.editExisting("firstTest.txt");
 		index.delete("something.txt");
 		Commit fifth = new Commit ("fifth commit", "konnie");
+		index.clearHashMap();
 
 //
 //
